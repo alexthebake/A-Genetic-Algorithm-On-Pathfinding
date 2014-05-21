@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>A* Algorithm</title>
+	<script src="js/jquery-v.1.11.1-min.js"></script>
+	<script src="js/graph.js"></script>
+	<script src="js/astar.js"></script>
+	<script src="js/heuristics.js"></script>
+	<script type="text/javascript">
+		window.onload = init;
+		// Initialize everything
+		function init () {
+			debugMsg("Initializing everything...");
+
+			// Set up world
+			var world = new Graph (30, 30);
+			world.init(0.15);
+			world.assignTable("graph");
+			world.constructTable();
+
+			// Set up heurtistics
+			var h = new Heuristics ();
+			
+			// Set up A* Context
+			var astar = new AStar (world, h.euclidean);
+			astar.init();
+
+			initForms();
+		}
+
+		function initForms () {
+			var wall_amt_input = $("input#wall-amt");
+			var wall_amt_btn = $("button#wall-amt-btn");
+
+			wall_amt_btn.click(function () {
+				var new_wall_amt = parseFloat(wall_amt_input.val());
+				world.reinit()
+			});
+		}
+	</script>
+	<style type="text/css">
+		td {
+			padding: 10px;
+			border: 1px solid #000;
+		}
+	</style>
+</head>
+<body>
+	<header>
+		<h1>A* Algorithm</h1>
+	</header>
+
+	<div style="float: left;">	
+		<table id="graph" cellspacing="0">
+		</table>
+	</div>
+
+	<div style="float: left; margin-left: 15px;">
+		Amount of walls: <input type="text" name="wall-amt" id="wall-amt" value="" /><br />
+		<button id="wall-amt-btn">Update</button>
+	</div>
+</body>
+</html>
