@@ -42,6 +42,7 @@ function Graph (n, m) {
 	this.assignTable = function (id) {
 		debugMsg("Table with id: "+id+" assigned to the graph...");
 		this.table = document.getElementById(id);
+		this.table.innerHTML = "";
 	}
 
 	this.constructTable = function () {

@@ -17,19 +17,28 @@
 			debugMsg("Initializing everything...");
 
 			// Set up world
-			world = new Graph (30, 30);
-			world.init(0.15);
-			world.assignTable("graph");
-			world.constructTable();
+			initWorld();
 
 			// Set up heurtistics
 			h = new Heuristics ();
 			
 			// Set up A* Context
+			initAStar();
+
+			// Set up forms
+			initForms();
+		}
+
+		function initWorld () {
+			world = new Graph (30, 30);
+			world.init(0.15);
+			world.assignTable("graph");
+			world.constructTable();	
+		}
+
+		function initAStar () {
 			astar = new AStar (world, h.euclidean);
 			astar.init();
-
-			initForms();
 		}
 
 		function initForms () {
@@ -83,6 +92,30 @@
 				var new_heuristic = h[h_input.val()];
 				astar.setParameters(astar.nswe_cost, astar.diag_cost, astar.diag_allowed, new_heuristic);
 			});
+
+			// Grouped Update Buttons
+			var world_btn = $("button#world-btn");
+			var astar_btn = $("button#astar-btn");
+			var update_all_btn = $("button#update-all-btn-btn");
+			world_btn.click(function () {
+				$(wall_amt_btn).trigger("click");
+				$(dimensions_btn).trigger("click");
+			});
+			astar_btn.click(function () {
+				$(diag_btn).trigger("click");
+				$(gcost_btn).trigger("click");
+				$(h_btn).trigger("click");
+			});
+			update_all_btn.click(function () {
+				$(world_btn).trigger("click");
+				$(astar_btn).trigger("click");
+			});
+
+			var reset_all_btn = $("button#reset-all-btn");
+			reset_all_btn.click(function () {
+				initWorld();
+				initAStar();
+			});
 		}
 	</script>
 	<style type="text/css">
@@ -92,6 +125,11 @@
 		}
 		.param {
 			margin-bottom: 20px;
+		}
+		.param-set {
+			padding-bottom: 10px;
+			margin-bottom: 20px;
+			border-bottom: 1px solid #999999;
 		}
 	</style>
 </head>
@@ -106,40 +144,49 @@
 	</div>
 
 	<div style="float: left; margin-left: 15px;">
-		<h2>World Parameters</h2>
-		<div class="param">
-			<b>Amount of walls: </b>
-			<input type="text" size="10" name="wall-amt" id="wall-amt" value="" /><br />
-			<button id="wall-amt-btn">Update</button>
-		</div>
-		<div class="param">
-			<b>Dimensions: </b>
-			<input type="text" size="3" name="n" id="n" value="" />
-			<input type="text" size="3" name="m" id="m" value="" /><br />
-			<button id="dimensions-btn">Update</button>
+		<div class="param-set">
+			<h2>World Parameters</h2>
+			<div class="param">
+				<b>Amount of walls: </b>
+				<input type="text" size="10" name="wall-amt" id="wall-amt" value="" /><br />
+				<button id="wall-amt-btn">Update</button>
+			</div>
+			<div class="param">
+				<b>Dimensions: </b>
+				<input type="text" size="3" name="n" id="n" value="" />
+				<input type="text" size="3" name="m" id="m" value="" /><br />
+				<button id="dimensions-btn">Update</button>
+			</div>
+			<button id="world-btn">Update World Paramters</button>
 		</div>
 
-		<h2>A* Parameters</h2>
-		<div class="param">
-			<b>Diagonals Allowed: </b>
-			<select id="diag-allowed" name="diag-allowed">
-				<option value="1">Yes</option>
-				<option value="0">No</option>
-			</select><br />
-			<button id="diag-btn">Update</button>
+		<div class="param-set">
+			<h2>A* Parameters</h2>
+			<div class="param">
+				<b>Diagonals Allowed: </b>
+				<select id="diag-allowed" name="diag-allowed">
+					<option value="1">Yes</option>
+					<option value="0">No</option>
+				</select><br />
+				<button id="diag-btn">Update</button>
+			</div>
+			<div class="param">
+				<b>G Costs: </b>
+				nswe: <input type="text" size="3" name="nswe" id="nswe" value="" />
+				diag: <input type="text" size="3" name="diag" id="diag" value="" /><br />
+				<button id="gcost-btn">Update</button>
+			</div>
+			<div class="param">
+				<b>Heuristic Function: </b>
+				<select id="h">
+				</select><br />
+				<button id="h-btn">Update</button>
+			</div>
+			<button id="astar-btn">Update A* Parameters</button>
 		</div>
-		<div class="param">
-			<b>G Costs: </b>
-			nswe: <input type="text" size="3" name="nswe" id="nswe" value="" />
-			diag: <input type="text" size="3" name="diag" id="diag" value="" /><br />
-			<button id="gcost-btn">Update</button>
-		</div>
-		<div class="param">
-			<b>Heuristic Function: </b>
-			<select id="h">
-			</select><br />
-			<button id="h-btn">Update</button>
-		</div>
+		<button id="update-all-btn">Update all parameters</button>
+		<br />
+		<button id="reset-all-btn">Reset all parameters</button>
 	</div>
 </body>
 </html>
