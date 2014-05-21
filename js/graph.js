@@ -24,7 +24,7 @@ function Graph (n, m) {
 		for (var i = 0; i < this.n; i++) {
 			this.grid[i] = new Array (this.m);
 			for (var j = 0; j < this.m; j++) {
-				this.grid[i][j] = new GraphNode (i, j, this.makeWall(amt));
+				this.grid[i][j] = new GraphNode (i, j, this.makeWall(this.wall_amt));
 			}
 		}
 	}
