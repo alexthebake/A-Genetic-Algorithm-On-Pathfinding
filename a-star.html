@@ -8,12 +8,13 @@
 	<script src="js/heuristics.js"></script>
 	<script type="text/javascript">
 		window.onload = init;
+		var world = null;
 		// Initialize everything
 		function init () {
 			debugMsg("Initializing everything...");
 
 			// Set up world
-			var world = new Graph (30, 30);
+			world = new Graph (30, 30);
 			world.init(0.15);
 			world.assignTable("graph");
 			world.constructTable();
@@ -34,7 +35,7 @@
 
 			wall_amt_btn.click(function () {
 				var new_wall_amt = parseFloat(wall_amt_input.val());
-				world.reinit()
+				world.reinit(world.n, world.m, new_wall_amt);
 			});
 		}
 	</script>

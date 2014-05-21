@@ -34,6 +34,7 @@ function Graph (n, m) {
 		this.n = n;
 		this.m = m;
 		this.grid = null;
+		this.table.innerHTML = "";
 		this.init(amt);
 	}
 
