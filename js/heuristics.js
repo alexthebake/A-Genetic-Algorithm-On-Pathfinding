@@ -18,4 +18,10 @@ function Heuristics () {
 		var delta_y = Math.abs(end_coord.y - start_coord.y);
 		return scale * Math.sqrt(Math.pow(delta_x, 2) + Math.pow(delta_y, 2));
 	}
+
+	this.random = function (start_coord, end_coord, scale) {
+		if (scale === undefined)
+			scale = 10;
+		return scale * Math.random();
+	}
 }
