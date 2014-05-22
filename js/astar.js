@@ -94,7 +94,7 @@ function AStar (graph, heuristic) {
 			nw : {coord: {x: node.x-1, y: node.y+1}, parent_coord: node, cost: this.diag_cost},
 			ne : {coord: {x: node.x+1, y: node.y+1}, parent_coord: node, cost: this.diag_cost},
 			sw : {coord: {x: node.x-1, y: node.y-1}, parent_coord: node, cost: this.diag_cost},
-			sw : {coord: {x: node.x+1, y: node.y-1}, parent_coord: node, cost: this.diag_cost}
+			se : {coord: {x: node.x+1, y: node.y-1}, parent_coord: node, cost: this.diag_cost}
 		};
 		proximity = this.validateProximity(proximity);
 		this.updateOpen(proximity);
