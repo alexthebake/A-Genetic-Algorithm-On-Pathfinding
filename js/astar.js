@@ -6,7 +6,7 @@
  */
 
 // Global variables
-var debug = true;
+var debug = false;
 function debugMsg(string) {
 	if (debug)
 		console.log(string);
@@ -77,16 +77,13 @@ function AStar (graph, heuristic) {
 
 	this.search = function () {
 		if (this.getNodeClosed(this.current_coord).eq(this.end_coord)) {
-			var path = this.determinePath();
-			debugMsg(path);
-			this.colorPath(path);
+			this.colorPath(this.determinePath());
 			return;
 		}
 		this.proximalSearch(this.current_coord);
 		this.search();
 	}
 
-	// Looks at the proximity of the given node
 	this.proximalSearch = function (node) {
 		debugMsg("Performing a proximal search...");
 		var proximity = {
@@ -109,7 +106,6 @@ function AStar (graph, heuristic) {
 		debugMsg("Found it! Making a path...");
 		var node = this.getNodeClosed(this.end_coord);
 		var path = [node];
-		// while (!node.eq(this.getNodeClosed(this.start_coord))) {
 		while (node.parent !== null) {
 			node = this.getNodeClosed(node.parentCoord());
 			path.push(node);
@@ -190,12 +186,12 @@ function AStar (graph, heuristic) {
 	}
 
 	this.colorStartNode = function () {
-		var start_color = "rgba(0, 0, 255, 0.3)";
+		var start_color = "rgba(0, 0, 255, 0.5)";
 		this.graph.colorNode(this.start_coord, start_color);
 	}
 
 	this.colorEndNode = function () {
-		var end_color = "rgba(255, 0, 0, 0.3)";
+		var end_color = "rgba(255, 0, 0, 0.5)";
 		this.graph.colorNode(this.end_coord, end_color);
 	}
 
@@ -208,11 +204,16 @@ function AStar (graph, heuristic) {
 	}
 
 	this.colorPath = function (path) {
-		var color = "rgba(0, 255, 0, 0.3)";
-		for (var i in path) {
-			var node = path[i];
-			this.graph.colorNode(node.coord(), color);
-		}
+		var color = "rgba(0, 255, 0, 1)";
+		(function colorPathNode (i) {
+			setTimeout(function () {
+				var node = path[i];
+				if (!node.eq(_this.start_coord))
+					_this.graph.colorNode(node.coord(), color);
+				if (--i) colorPathNode(i);
+			}, 50);
+		})(path.length-1);
+
 		this.colorStartNode();
 		this.colorEndNode();
 	}

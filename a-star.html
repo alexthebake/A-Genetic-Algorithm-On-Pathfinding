@@ -37,7 +37,7 @@
 		}
 
 		function initAStar () {
-			astar = new AStar (world, h.euclidean);
+			astar = new AStar (world, h.manhattan);
 			astar.init();
 		}
 
@@ -49,6 +49,7 @@
 				var new_wall_amt = parseFloat(wall_amt_input.val());
 				world.reinit(world.n, world.m, new_wall_amt);
 				world.constructTable();
+				astar.init();
 			});
 
 			// World dimensions
@@ -60,6 +61,7 @@
 				var new_m = parseInt(m_input.val());
 				world.reinit(new_n, new_m, world.wall_amt);
 				world.constructTable();
+				astar.init();
 			});
 
 			// Diagonals allowed
@@ -96,7 +98,6 @@
 			// Grouped Update Buttons
 			var world_btn = $("button#world-btn");
 			var astar_btn = $("button#astar-btn");
-			var update_all_btn = $("button#update-all-btn-btn");
 			world_btn.click(function () {
 				$(wall_amt_btn).trigger("click");
 				$(dimensions_btn).trigger("click");
@@ -106,12 +107,13 @@
 				$(gcost_btn).trigger("click");
 				$(h_btn).trigger("click");
 			});
+
+			var update_all_btn = $("button#update-all-btn");
+			var reset_all_btn = $("button#reset-all-btn");
 			update_all_btn.click(function () {
 				$(world_btn).trigger("click");
 				$(astar_btn).trigger("click");
 			});
-
-			var reset_all_btn = $("button#reset-all-btn");
 			reset_all_btn.click(function () {
 				initWorld();
 				initAStar();
