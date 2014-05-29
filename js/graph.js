@@ -34,8 +34,24 @@ function Graph (n, m) {
 		this.n = n;
 		this.m = m;
 		this.grid = null;
-		this.table.innerHTML = "";
+		if (this.table !== null)
+			this.table.innerHTML = "";
 		this.init(amt);
+	}
+
+	this.initFromMap = function (map) {
+		var rows = map.split("\n");
+		this.n = rows[0].split(",").length;
+		this.m = rows.length;
+		this.reinit(this.n, this.m, 0);
+		for (var i in rows) {
+			var row = rows[i];
+			var walls = row.split(",");
+			for (var j in walls) {
+				var is_wall = parseInt(walls[j]) === 1;
+				this.grid[i][j].updateIsWall(is_wall);
+			}
+		}
 	}
 
 	// Table functions
@@ -118,5 +134,13 @@ function GraphNode (x, y, is_wall) {
 
 	this.updateIsWall = function (is_wall) {
 		this.is_wall = is_wall;
+	}
+
+	this.eq = function (coord) {
+		if (coord.x === this.coord().x &&
+			coord.y === this.coord().y)
+			return true;
+		else
+			return false;
 	}
 }

@@ -34,11 +34,13 @@ function AStar (graph, heuristic) {
 	this.nswe_cost = 10; // Default
 	this.diag_cost = 14; // Default
 	this.diag_allowed = true; // Default
-	this.setParameters = function (nswe_cost, diag_cost, diag_allowed, heuristic) {
+	this.color_open = false; // Default
+	this.setParameters = function (nswe_cost, diag_cost, diag_allowed, color_open, heuristic) {
 		debugMsg("Setting A* Parameters to...");
 		this.nswe_cost = nswe_cost;
 		this.diag_cost = diag_cost;
 		this.diag_allowed = diag_allowed;
+		this.color_open = color_open;
 		this.h = heuristic;
 	}
 
@@ -53,8 +55,9 @@ function AStar (graph, heuristic) {
 	}
 
 	// Search functions
-	this.initSearch = function (start_coord, end_coord) {
+	this.initSearch = function (start_coord, end_coord, color_path) {
 		debugMsg("Initializing A* Search functions");
+		color_path = (color_path === undefined) ? true : color_path;
 		this.resetContext();
 		this.start_coord = start_coord;
 		this.current_coord = start_coord;
@@ -62,7 +65,7 @@ function AStar (graph, heuristic) {
 
 		// Add starting node to closed list
 		this.closed.push(new AStarNode(this.graph.getNode(start_coord), null, 0));
-		this.search();
+		return this.search(color_path);
 	}
 
 	this.resetContext = function () {
@@ -75,13 +78,17 @@ function AStar (graph, heuristic) {
 		this.graph.colorAllWalls();
 	}
 
-	this.search = function () {
+	this.search = function (color_path) {
+		color_path = (color_path === undefined) ? true : color_path;
 		if (this.getNodeClosed(this.current_coord).eq(this.end_coord)) {
-			this.colorPath(this.determinePath());
-			return;
+			var path = this.determinePath();
+			if (color_path)
+				this.colorPath(path);
+			this.printPathCost(path, "cost");
+			return path.length;
 		}
 		this.proximalSearch(this.current_coord);
-		this.search();
+		return this.search(color_path);
 	}
 
 	this.proximalSearch = function (node) {
@@ -98,7 +105,10 @@ function AStar (graph, heuristic) {
 		};
 		proximity = this.validateProximity(proximity);
 		this.updateOpen(proximity);
-		this.colorOpen();
+		
+		if (this.color_open)
+			this.colorOpen();
+		
 		this.chooseBestOpen();
 	}
 
@@ -133,6 +143,10 @@ function AStar (graph, heuristic) {
 		var min = this.f(this.open[0].coord());
 		var min_idx = 0;
 		for (var i in this.open) {
+			if (this.open[i].eq(this.end_coord)) {
+				min_idx = i;
+				break;
+			}
 			if (this.f(this.open[i].coord()) < min) {
 				min = this.f(this.open[i].coord());
 				min_idx = i;
@@ -173,16 +187,33 @@ function AStar (graph, heuristic) {
 		    	updateClicks();
 
 			    // Assign start node
-			    if (clicks === 0) {
-			    	_this.start_coord = coord;
-			    	_this.colorStartNode();
-			    } else if (clicks === 1) {
-			    	_this.end_coord = coord;
-			    	_this.colorEndNode();
+			    if (clicks === 0)
+			    	_this.setStartNode(coord);
+			    else if (clicks === 1) {
+			    	_this.setEndNode(coord);
 			    	_this.initSearch(_this.start_coord, _this.end_coord);
 			    }
 			}
 		});
+	}
+
+	this.maxOpenCost = function () {
+		var max_cost = 0;
+		for (var i in this.open) {
+			var node = this.open[i];
+			max_cost = (this.f(node.coord()) > max_cost) ? this.f(node.coord()) : max_cost;
+		}
+		return max_cost;
+	}
+
+	this.setStartNode = function (coord) {
+		this.start_coord = coord;
+		this.colorStartNode();
+	}
+
+	this.setEndNode = function (coord) {
+		this.end_coord = coord;
+		this.colorEndNode();	
 	}
 
 	this.colorStartNode = function () {
@@ -196,15 +227,17 @@ function AStar (graph, heuristic) {
 	}
 
 	this.colorOpen = function () {
+		var max_open_cost = this.maxOpenCost() * 1.2;
 		for (var i in this.open) {
 			var node = this.open[i];
-			var color = "rgba(0, 0, 0, "+(this.f(node.coord())/1000)+")";
+			var color = "rgba(0, 50, 20, "+(this.f(node.coord())/max_open_cost)+")";
 			this.graph.colorNode(node.coord(), color);
 		}
 	}
 
 	this.colorPath = function (path) {
 		var color = "rgba(0, 255, 0, 1)";
+		// This should be more modular...
 		(function colorPathNode (i) {
 			setTimeout(function () {
 				var node = path[i];
@@ -216,6 +249,11 @@ function AStar (graph, heuristic) {
 
 		this.colorStartNode();
 		this.colorEndNode();
+	}
+
+	// This should be more modular...
+	this.printPathCost = function (path, id)  {
+		document.getElementById(id).innerHTML = path.length;
 	}
 
 	this.getNodeOpen = function (coord) {
