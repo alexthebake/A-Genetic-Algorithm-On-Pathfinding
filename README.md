@@ -1,6 +1,4 @@
-A Genetic Algorithm on Pathfinding
-==================================
+A* JavaScript Implementation
+============================
 
-Exploring the mysteries of genetic algorithms on the wonders of pathfinding. 
-
-The aim to run a genetic algorithm on various pathfinding ones, mutating parameters and heuristics, just to see what happens!
+A simple A* implementation using JavaScript on an HTML table.
